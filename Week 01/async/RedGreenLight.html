@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>红绿灯</title>
+  <style>
+    div{
+      border: 1px solid #cdcdcd;
+      display: inline-block;
+      padding: 10px;
+    }
+    span{
+      display: inline-block;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin: 0 10px;
+      position: relative;
+    }
+    span::before{
+      content: '';
+      display: inline-block;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      background: rgba(0, 0, 0, .4);
+    }
+    #green{
+      background: green;
+    }
+    #red{
+      background: red;
+    }
+    #yellow{
+      background: yellow;
+    }
+    .blur::before{
+      background: transparent;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <span id="red"></span>
+    <span id="yellow"></span>
+    <span id="green"></span>
+  </div>
+  <button id="next">next</button>
+  <script>
+    let greenLight = document.getElementById('green')
+    let redLight = document.getElementById('red')
+    let yellowLight = document.getElementById('yellow')
+    function green(){
+      yellowLight.className = ''
+      greenLight.className = 'blur'
+      redLight.className = ''
+    }
+    function red() {
+      yellowLight.className = ''
+      greenLight.className = ''
+      redLight.className = 'blur'
+    }
+    function yellow() {
+      yellowLight.className = 'blur'
+      greenLight.className = ''
+      redLight.className = ''
+    }
+    
+    function sleep(timeout) {
+      return new Promise((resolve, reject) => {
+        setTimeout(resolve, timeout);
+      })
+    }
+    
+    // promise 用法
+    function go() {
+      green()
+      sleep(10000).then(() => {
+        yellow()
+        return sleep(2000)
+      }).then(() => {
+        red()
+        return sleep(5000)
+      }).then(go)
+    }
+
+    // async await 用法
+    async function asyncGo() {
+      while(true) {
+        green()
+        await sleep(10000)
+        yellow()
+        await sleep(2000)
+        red()
+        await sleep(5000)
+      }
+    }
+
+    // 手动模式
+    function happen(element, eventName) {
+      return new Promise((resolve, reject) => {
+        element.addEventListener(eventName, resolve, { once: true })
+      })
+    }
+    // 手动调用
+    async function manualGo() {
+      let btn = document.getElementById('next')
+      while (true) {
+        green()
+        await happen(btn, 'click')
+        yellow()
+        await happen(btn, 'click')
+        red()
+        await happen(btn, 'click')
+      }
+    }
+  </script>
+</body>
+</html>
