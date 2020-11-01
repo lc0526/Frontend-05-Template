@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KMP</title>
+</head>
+<body>
+  <script>
+    function kmp(source, pattern) {
+      // 计算 table
+      let table = new Array(pattern.length).fill(0)
+      {
+        let i = 1,j = 0;
+        while (i < pattern.length) {
+          // 匹配上
+          if (pattern[i] === pattern[j]) {
+            ++j;
+            ++i;
+            table[i] = j;
+          } else {
+            if (j > 0) {
+              j = table[j];
+            } else {
+              ++i;
+            }
+          }
+        }
+      }
+      {
+        let i = 0, j = 0;
+        while (i < source.length) {
+          // 匹配上
+          if (pattern[j] === source[i]) {
+            ++i, ++j;
+          } else {
+            if (j > 0) {
+              j = table[j];
+            } else {
+              ++i;
+            }
+          }
+          if (j === pattern.length) {
+            return true
+          }
+        }
+        return false
+      }
+    }
+    console.log(kmp('abcdabce', 'abcdabce'))
+    // console.log   [0, 0, 0, 0, 0, 1, 2, 3]，显示的数字是上一位匹配的
+  </script>
+</body>
+</html>
