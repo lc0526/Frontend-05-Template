@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>拖拽</title>
+  <style>
+    .dragable{
+      width: 100px;
+      height: 100px;
+      background-color: pink;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字 这里是文字
+  </div>
+  <div id="dragable" class="dragable"></div>
+  <script>
+    let dragable = document.getElementById('dragable')
+    let container = document.getElementById('container')
+    // 文字没有分节点，所以需要用range 去寻找可以插入的空位
+    // 基准点，即拖拽时的当前位置
+    let baseX = 0
+    let baseY = 0
+
+    dragable.addEventListener('mousedown', function (event) {
+      // 起始点
+      let startX = event.clientX
+      let startY = event.clientY
+      let up = e => {
+        baseX = baseX + e.clientX - startX
+        baseY = baseY + e.clientY - startY
+        document.removeEventListener('mousemove', move)
+        document.removeEventListener('mouseup', up)
+      }
+
+      let move = (ev) => {
+        let range = getNearest(ev.clientX, ev.clientY)
+        range.insertNode(dragable)
+        // dragable.style.transform = `translate(${baseX + ev.clientX - startX}px, ${baseY + ev.clientY - startY}px)`
+      }
+      // 需监听 document，不能只监听 dragable，因为要在整个文档内拖拽，范围不仅仅是 dragable
+      document.addEventListener('mousemove', move)
+      document.addEventListener('mouseup', up)
+    })
+
+    let ranges = []
+    for (let i = 0 ;i< container.childNodes[0].textContent.length;i ++) {
+      let range = document.createRange()
+      range.setStart(container.childNodes[0], i)
+      range.setEnd(container.childNodes[0], i)
+      
+      // console.log(range.getBoundingClientRect())
+      ranges.push(range)
+    }
+    
+    // 找离某个点最近的 range
+    function getNearest(x, y) {
+      let min = Infinity
+      let nearest = null
+
+      for (let range of ranges) {
+        // range 不变，但 cssOM 会随着页面变化变化，所以要每次都重新取
+        let rect = range.getBoundingClientRect()
+        console.log(rect)
+        let distance = (rect.x - x) ** 2 + (rect.y - y) ** 2
+
+        if (distance < min) {
+          nearest = range
+          min = distance
+        }
+      }
+      return nearest
+    }
+
+    // 去掉默认选中事件
+    document.addEventListener('selectstart', event => event.preventDefault())
+  </script>
+</body>
+</html>
