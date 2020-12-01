@@ -21,6 +21,7 @@
 ### 3. HTTP
 ![HTTP 相关知识点](./imgs/HTTP.png)
 
+### 4. ToyBrowser 实现过程
 第一步：HTTP 请求总结
 - 设计一个 HTTP 请求的类
 - content-type 是一个必要的字段，要有默认值
@@ -37,3 +38,11 @@
 - 设计支持已有的 connection 或者新建 connection
 - 收到数据传给 parser
 - 根据 parser 的状态resolve Promise
+
+第四步：ReponseParser 总结
+- Response 必须分段构造，所以我们要用一个 ResponseParser 来'装配'
+- ResponseParser 分段戳筛查 ResponseText，用状态机来分析文本的结构
+
+第五步：ResponseBody 的解析
+- Response 的 body 可能根据 Content-Type 有不同的结构，因此采用子 Parser 的结构来解决问题
+- 以 TrunkedBodyParser 为例，同样用状态机来处理 body 的格式
