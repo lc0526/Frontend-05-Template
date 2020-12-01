@@ -7,11 +7,11 @@ http.createServer((request, response) => {
   }).on('data', (chunk) => {
     body.push(chunk.toString())
   }).on('end', () => {
-    body = Buffer.concat(body).toString()
+    body = body.join('')
     console.log(`body: ${body}`)
-    response.writeHead(200, {'Contett-type': 'text/html'})
+    response.writeHead(200, {'Content-type': 'text/html'})
     response.end(' Hello World\n')
   })
-}).listen(8888)
+}).listen(8088)
 
-console.log('server started')
+console.log('server started! port is 8088')
